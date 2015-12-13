@@ -46,10 +46,8 @@ function create() {
     // Spawn the clouds
     generateClouds();
 
-    // Spawn our balloon
-    balloon = game.add.sprite(400, 400, 'balloon');
-    var fly = balloon.animations.add('fly');
-    balloon.animations.play('fly', 7, true);
+    // Add our player/balloon
+    spawnBalloon();
 
     // Add our sound effects
     popSound = game.add.audio('pop');
@@ -91,6 +89,14 @@ function checkInput() {
 
 // Check to see if we've made contact with a projectile or powerup
 function checkCollision() {
+}
+
+// Generate a randomly-colored balloon for our player
+function spawnBalloon() {
+    balloon = game.add.sprite(400, 400, 'balloon');
+    balloon.tint = Math.random() * 0xffffff;
+    var fly = balloon.animations.add('fly');
+    balloon.animations.play('fly', 7, true);
 }
 
 // Create and position our clouds
