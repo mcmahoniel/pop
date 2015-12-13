@@ -72,7 +72,7 @@ function create() {
 
 function update() {
     if (paused && gameOver === false) {
-        if (game.input.activePointer.isDown) {
+        if (keys.left.isDown || keys.right.isDown) {
             // Delete our info text
             game.world.remove(gameInfoText);
             // Start the game
@@ -139,7 +139,7 @@ function updateClouds() {
             currentCloud.x = Math.random() * 800;
         }
         else {
-            currentCloud.y += 1;
+            currentCloud.y++;
         }
     }, this);
 }
