@@ -149,5 +149,8 @@ function updateAltitude() {
     // Should rise at about 8ft./second
     altitude += 0.1;
     altitudeText.text = 'Altitude: ' + altitude.toFixed(0) + ' ft.';
+    // The balloon gets larger as the altitude increases
     // TODO: Pop the balloon at ~28k ft.
+    balloon.scale.x += 0.0001;
+    balloon.scale.y += 0.0001;
 }
