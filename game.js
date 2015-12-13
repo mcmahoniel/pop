@@ -12,6 +12,10 @@ var powerUp;
 
 // Declare the text fields
 var gameInfoText;
+var altitudeText;
+
+// Declare our score trackers;
+var altitude = 1000;
 
 // Declare the game timers
 var time;
@@ -60,6 +64,10 @@ function create() {
     style = { font: '50px Arial', align: 'center', fill: '#3B5A75' };
     gameInfoText = game.add.text(game.world.centerX - 330, game.world.centerY - 50, description, style);
     gameInfoText.bringToTop();
+
+    // Add and configure our altitude status text
+    altitudeText = game.add.text(10, 0, '', style);
+    altitudeText.bringToTop();
 }
 
 function update() {
@@ -72,14 +80,15 @@ function update() {
         }
     } else {
         checkInput();
-        //updateClouds();
         checkCollision();
+        updateAltitude();
     }
 
     updateClouds();
 }
 
-// Move the balloon left and right, double-tap to boost 
+// Move the balloon left and right
+// TODO: Double-tap to boost 
 function checkInput() {
     if (keys.left.isDown && balloon.x > 0) {
         if (balloon.angle > -20) {
@@ -133,4 +142,10 @@ function updateClouds() {
             currentCloud.y += 1;
         }
     }, this);
+}
+
+// Increase our altitude and modify the game accordingly
+function updateAltitude() {
+    altitude += 0.05;
+    altitudeText.text = 'Altitude: ' + altitude.toFixed(0) + ' ft.';
 }
