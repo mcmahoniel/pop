@@ -166,7 +166,7 @@ function updateAltitude() {
         altitudeText.text = 'Altitude: ' + altitude.toFixed(0) + ' ft.';
         // The balloon gets larger as the altitude increases
         balloon.scale.x += 0.0001;
-        balloon.scale.y += 0.0005;
+        balloon.scale.y += 0.00005;
     } else if (altitude >= 28000) {
         popBalloon();
     } else if (balloon.scale.x >= 2) {
