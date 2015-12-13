@@ -5,6 +5,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
 var background;
 var cloud;
 var balloon;
+var popping;
 var tack;
 var bird;
 var meteorite;
@@ -13,6 +14,8 @@ var powerUp;
 // Declare the text fields
 var gameInfoText;
 var altitudeText;
+var loseText;
+var lose;
 
 // Declare our score trackers;
 // Set our starting altitude
@@ -36,6 +39,7 @@ function preload() {
     game.load.image('background', 'assets/sprites/background.png');
     game.load.spritesheet('clouds', 'assets/sprites/clouds.png', 200, 150, 5);
     game.load.spritesheet('balloon', 'assets/sprites/balloon.png', 32, 64, 5);
+    game.load.spritesheet('popping', 'assets/sprites/popping.png', 64, 64, 7);
 
     // Load sound effects
     game.load.audio('pop', 'assets/sounds/pop.wav');
@@ -78,6 +82,16 @@ function update() {
             game.world.remove(gameInfoText);
             // Start the game
             paused = false;
+        }
+    } else if (paused === true && gameOver === true) {
+        game.world.remove(altitudeText);
+        // Display losing text
+        if (balloon.scale.x >= 2) {
+            loseText = "You grew too large and popped!\nYou made it up to " + altitude.toFixed(0) + " feet!";
+            lose = game.add.text(game.world.centerX - 360, game.world.centerY - 70, loseText, style);
+        } else if (altitude >= 28000) {
+            loseText = "The atmosphere got too thin and you popped!\nYou made it up to " + altitude.toFixed(0) + " feet!";
+            lose = game.add.text(game.world.centerX - 360, game.world.centerY - 70, loseText, style);
         }
     } else {
         checkInput();
@@ -146,16 +160,34 @@ function updateClouds() {
 
 // Increase our altitude and modify the game accordingly
 function updateAltitude() {
-    if (altitude < 28000) {
+    if (altitude < 28000 && balloon.scale.x < 2) {
         // Should rise at about 8ft./second
         altitude += 0.1;
         altitudeText.text = 'Altitude: ' + altitude.toFixed(0) + ' ft.';
         // The balloon gets larger as the altitude increases
         balloon.scale.x += 0.0001;
-        balloon.scale.y += 0.0001;
+        balloon.scale.y += 0.0005;
     } else if (altitude >= 28000) {
-        // TODO: Pop the balloon at 28k ft.
-    } else if (balloon.scale.x > 2) {
-        // TODO: Pop the balloon if it doubles in size
+        popBalloon();
+    } else if (balloon.scale.x >= 2) {
+        popBalloon();
     }
+}
+
+// Add and update our enemies
+function updateProjectiles() {
+    // TODO: Spawn a projectile
+}
+
+// Pop the balloon
+function popBalloon() {
+    popSound.play();
+    // Switch to our popping sprite sheet and animate
+    balloon.loadTexture('popping');
+    var dying = balloon.animations.add('dying');
+    balloon.animations.play('dying', 20, false);
+    game.world.remove('balloon');
+    // Set our gamestate accordingly
+    gameOver = true;
+    paused = true;
 }
