@@ -3,6 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
 
 // Declare the sprites globally so we can modify them later
 var background;
+var cloud;
 var balloon;
 var tack;
 var bird;
@@ -28,6 +29,7 @@ var keys;
 function preload() {
     // Load the background image and game sprites
     game.load.image('background', 'assets/sprites/background.png');
+    game.load.spritesheet('clouds', 'assets/sprites/clouds.png', 200, 150, 5);
     game.load.spritesheet('balloon', 'assets/sprites/balloon.png', 32, 64, 5);
     
     // Load sound effects
@@ -41,6 +43,9 @@ function create() {
     // Apply the background sprite
     background = game.add.sprite(0, 0, 'background');
 
+    // Spawn the clouds
+    generateClouds();
+
     // Spawn our balloon
     balloon = game.add.sprite(400, 400, 'balloon');
     var fly = balloon.animations.add('fly');
@@ -53,7 +58,7 @@ function create() {
     keys = game.input.keyboard.createCursorKeys();
 
     // Add and configure our game info text
-    var description = 'Slip the surly bonds...\nDodge left and right to survive.';
+    var description = 'Slip the surly bonds of Earth...\nDodge left and right to survive.';
     style = { font: '50px Arial', align: 'center', fill: '#3B5A75' };
     gameInfoText = game.add.text(game.world.centerX - 330, game.world.centerY - 50, description, style);
     gameInfoText.bringToTop();
@@ -69,6 +74,7 @@ function update() {
         }
     } else {
         checkInput();
+        updateClouds();
         checkCollision();
     }
 }
@@ -83,6 +89,34 @@ function checkInput() {
     }
 }
 
-// Check to see if we've made contact with a projectile
+// Check to see if we've made contact with a projectile or powerup
 function checkCollision() {
+}
+
+// Create and position our clouds
+function generateClouds() {
+    // Generate our group of clouds
+    cloud = game.add.group();
+    for (var i = 0; i < 5; i++) {
+        // Position randomly inside our viewport
+        x = Math.random() * 800;
+        y = Math.random() * 600;
+        currentCloud = cloud.create(x, y, 'clouds');
+        // Randomly pick which cloud to be
+        cloudType = Math.floor(Math.random() * 5);
+        currentCloud.frame = cloudType;
+    }
+}
+
+// Update the position of our clouds
+function updateClouds() {
+    cloud.forEach(function(currentCloud) {
+        if (currentCloud.y > 632) {
+            currentCloud.y = -200;
+            currentCloud.x = Math.random() * 800;
+        }
+        else {
+            currentCloud.y += 1;
+        }
+    }, this);
 }
