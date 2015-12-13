@@ -81,10 +81,10 @@ function update() {
 
 // Move the balloon left and right, double-tap to boost 
 function checkInput() {
-    if (keys.left.isDown) {
+    if (keys.left.isDown && balloon.x > 0) {
         balloon.x -= 3;
     }
-    else if (keys.right.isDown) {
+    else if (keys.right.isDown && balloon.x < 768) {
         balloon.x += 3;
     }
 }
