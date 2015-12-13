@@ -3,7 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
 
 // Declare the sprites globally so we can modify them later
 var background;
-//var balloon;
+var balloon;
 var tack;
 var bird;
 var meteorite;
@@ -22,10 +22,13 @@ var popSound;
 var paused = true;
 var gameOver = false;
 
+// Declare a variable to hold our keyboard keys
+var keys;
+
 function preload() {
     // Load the background image and game sprites
     game.load.image('background', 'assets/sprites/background.png');
-    game.load.spritesheet('balloon', 'assets/sprites/balloon.png', 64, 160, 5);
+    game.load.spritesheet('balloon', 'assets/sprites/balloon.png', 32, 64, 5);
     
     // Load sound effects
     game.load.audio('pop', 'assets/sounds/pop.wav');
@@ -39,12 +42,15 @@ function create() {
     background = game.add.sprite(0, 0, 'background');
 
     // Spawn our balloon
-    var balloon = game.add.sprite(400, 400, 'balloon');
+    balloon = game.add.sprite(400, 400, 'balloon');
     var fly = balloon.animations.add('fly');
-    balloon.animations.play('fly', 30, true);
+    balloon.animations.play('fly', 7, true);
 
     // Add our sound effects
     popSound = game.add.audio('pop');
+
+    // Assign our keyboard keys
+    keys = game.input.keyboard.createCursorKeys();
 
     // Add and configure our game info text
     var description = 'Slip the surly bonds...\nDodge left and right to survive.';
@@ -69,6 +75,12 @@ function update() {
 
 // Move the balloon left and right, double-tap to boost 
 function checkInput() {
+    if (keys.left.isDown) {
+        balloon.x -= 3;
+    }
+    else if (keys.right.isDown) {
+        balloon.x += 3;
+    }
 }
 
 // Check to see if we've made contact with a projectile
