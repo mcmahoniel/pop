@@ -146,6 +146,8 @@ function updateClouds() {
 
 // Increase our altitude and modify the game accordingly
 function updateAltitude() {
-    altitude += 0.05;
+    // Should rise at about 8ft./second
+    altitude += 0.1;
     altitudeText.text = 'Altitude: ' + altitude.toFixed(0) + ' ft.';
+    // TODO: Pop the balloon at ~28k ft.
 }
