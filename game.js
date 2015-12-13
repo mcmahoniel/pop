@@ -115,6 +115,13 @@ function checkInput() {
             balloon.angle += 1;
         }
         balloon.x += 3;
+    } else {
+        // Reset the angle over time if no buttons are pressed
+        if (balloon.angle < 0) {
+            balloon.angle += 1;
+        } else if (balloon.angle > 0) {
+            balloon.angle -= 1;
+        }
     }
 }
 
