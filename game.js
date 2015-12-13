@@ -15,6 +15,7 @@ var gameInfoText;
 var altitudeText;
 
 // Declare our score trackers;
+// Set our starting altitude
 var altitude = 1000;
 
 // Declare the game timers
@@ -35,7 +36,7 @@ function preload() {
     game.load.image('background', 'assets/sprites/background.png');
     game.load.spritesheet('clouds', 'assets/sprites/clouds.png', 200, 150, 5);
     game.load.spritesheet('balloon', 'assets/sprites/balloon.png', 32, 64, 5);
-    
+
     // Load sound effects
     game.load.audio('pop', 'assets/sounds/pop.wav');
 }
@@ -95,8 +96,7 @@ function checkInput() {
             balloon.angle -= 1;
         }
         balloon.x -= 3;
-    }
-    else if (keys.right.isDown && balloon.x < 768) {
+    } else if (keys.right.isDown && balloon.x < 768) {
         if (balloon.angle < 20) {
             balloon.angle += 1;
         }
@@ -146,11 +146,16 @@ function updateClouds() {
 
 // Increase our altitude and modify the game accordingly
 function updateAltitude() {
-    // Should rise at about 8ft./second
-    altitude += 0.1;
-    altitudeText.text = 'Altitude: ' + altitude.toFixed(0) + ' ft.';
-    // The balloon gets larger as the altitude increases
-    // TODO: Pop the balloon at ~28k ft.
-    balloon.scale.x += 0.0001;
-    balloon.scale.y += 0.0001;
+    if (altitude < 28000) {
+        // Should rise at about 8ft./second
+        altitude += 0.1;
+        altitudeText.text = 'Altitude: ' + altitude.toFixed(0) + ' ft.';
+        // The balloon gets larger as the altitude increases
+        balloon.scale.x += 0.0001;
+        balloon.scale.y += 0.0001;
+    } else if (altitude >= 28000) {
+        // TODO: Pop the balloon at 28k ft.
+    } else if (balloon.scale.x > 2) {
+        // TODO: Pop the balloon if it doubles in size
+    }
 }
