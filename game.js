@@ -72,9 +72,11 @@ function update() {
         }
     } else {
         checkInput();
-        updateClouds();
+        //updateClouds();
         checkCollision();
     }
+
+    updateClouds();
 }
 
 // Move the balloon left and right, double-tap to boost 
