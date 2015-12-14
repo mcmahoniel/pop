@@ -6,8 +6,7 @@ var background;
 var cloud;
 var balloon;
 var popping;
-var tack;
-var bird;
+var projectiles;
 var meteorite;
 var powerUp;
 
@@ -40,6 +39,7 @@ function preload() {
     game.load.spritesheet('clouds', 'assets/sprites/clouds.png', 200, 150, 5);
     game.load.spritesheet('balloon', 'assets/sprites/balloon.png', 32, 64, 5);
     game.load.spritesheet('popping', 'assets/sprites/popping.png', 64, 64, 7);
+    game.load.spritesheet('meteorite', 'assets/sprites/meteorite.png', 32, 32, 4);
 
     // Load sound effects
     game.load.audio('pop', 'assets/sounds/pop.wav');
@@ -63,6 +63,9 @@ function create() {
 
     // Assign our keyboard keys
     keys = game.input.keyboard.createCursorKeys();
+
+    // Initialize our group of "enemies"
+    generateProjectiles();
 
     // Add and configure our game info text
     var description = 'Slip the surly bonds of Earth...\nDodge left and right to survive.';
@@ -92,6 +95,8 @@ function update() {
         } else if (altitude >= 28000) {
             loseText = "The atmosphere got too thin and you popped!\nYou made it up to " + altitude.toFixed(0) + " feet!";
             lose = game.add.text(game.world.centerX - 360, game.world.centerY - 70, loseText, style);
+        } else {
+            loseText = "You were struck by an errant projectile.\nYou made it up to " + altitude.toFixed(0) + " feet!";
         }
     } else {
         checkInput();
@@ -125,8 +130,10 @@ function checkInput() {
     }
 }
 
-// Check to see if we've made contact with a projectile or powerup
+// Check to see if we've made contact with a projectile
+// TODO: Add powerups (like shrinking the balloon)
 function checkCollision() {
+    game.physics.arcade.overlap(projectiles, balloon, popBalloon, null, this);
 }
 
 // Generate a randomly-colored balloon for our player
@@ -135,6 +142,7 @@ function spawnBalloon() {
     balloon.tint = Math.random() * 0xffffff;
     var fly = balloon.animations.add('fly');
     balloon.animations.play('fly', 7, true);
+    game.physics.enable(balloon, Phaser.Physics.ARCADE);
 }
 
 // Create and position our clouds
@@ -181,9 +189,11 @@ function updateAltitude() {
     }
 }
 
-// Add and update our enemies
-function updateProjectiles() {
-    // TODO: Spawn a projectile
+// Addo our enemies
+function generateProjectiles() {
+    projectiles = game.add.group();
+    projectiles.create(500,400,'meteorite');
+    game.physics.enable(projectiles, Phaser.Physics.ARCADE);
 }
 
 // Pop the balloon
