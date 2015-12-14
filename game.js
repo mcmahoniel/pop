@@ -19,12 +19,16 @@ var lose;
 // Declare our score trackers;
 // Set our starting altitude
 var altitude = 1000;
+var dodged = 0;
 
 // Declare the game timers
 var time;
 
 // Declare our sound effects
 var popSound;
+
+// Declare our background music
+var music;
 
 // Declare our game states
 var paused = true;
@@ -43,6 +47,9 @@ function preload() {
 
     // Load sound effects
     game.load.audio('pop', 'assets/sounds/pop.wav');
+
+    // Load music
+    game.load.audio('music', 'assets/sounds/music.mp3');
 }
 
 function create() {
@@ -60,6 +67,10 @@ function create() {
 
     // Add our sound effects
     popSound = game.add.audio('pop');
+
+    // Add our background music
+    music = game.add.audio('music');
+    music.play();
 
     // Assign our keyboard keys
     keys = game.input.keyboard.createCursorKeys();
@@ -90,20 +101,21 @@ function update() {
         game.world.remove(altitudeText);
         // Display losing text
         if (balloon.scale.x >= 2) {
-            loseText = "You grew too large and popped!\nYou made it up to " + altitude.toFixed(0) + " feet!";
+            loseText = "You grew too large and popped!\nYou made it up to " + altitude.toFixed(0) + " feet,\nand dodged " + dodged + " meteors!";
             lose = game.add.text(game.world.centerX - 360, game.world.centerY - 70, loseText, style);
         } else if (altitude >= 28000) {
-            loseText = "The atmosphere got too thin and you popped!\nYou made it up to " + altitude.toFixed(0) + " feet!";
+            loseText = "The atmosphere got too thin and you popped!\nYou made it up to " + altitude.toFixed(0) + " feet,\nand dodged " + dodged + " meteors!";
             lose = game.add.text(game.world.centerX - 360, game.world.centerY - 70, loseText, style);
         } else {
-            loseText = "You were struck by an errant projectile.\nYou made it up to " + altitude.toFixed(0) + " feet!";
+            loseText = "You were struck by a meteor!\nYou made it up to " + altitude.toFixed(0) + " feet,\nand dodged " + dodged + " meteors!";
+            lose = game.add.text(game.world.centerX - 330, game.world.centerY - 90, loseText, style);
         }
     } else {
         checkInput();
         checkCollision();
         updateAltitude();
+        updateProjectiles();
     }
-
     updateClouds();
 }
 
@@ -166,8 +178,7 @@ function updateClouds() {
         if (currentCloud.y > 632) {
             currentCloud.y = -200;
             currentCloud.x = Math.random() * 800;
-        }
-        else {
+        } else {
             currentCloud.y++;
         }
     }, this);
@@ -178,7 +189,7 @@ function updateAltitude() {
     if (altitude < 28000 && balloon.scale.x < 2) {
         // Should rise at about 8ft./second
         altitude += 0.1;
-        altitudeText.text = 'Altitude: ' + altitude.toFixed(0) + ' ft.';
+        altitudeText.text = altitude.toFixed(0) + ' ft.';
         // The balloon gets larger as the altitude increases
         balloon.scale.x += 0.0001;
         balloon.scale.y += 0.00005;
@@ -189,11 +200,30 @@ function updateAltitude() {
     }
 }
 
-// Addo our enemies
+// Add our enemies
 function generateProjectiles() {
     projectiles = game.add.group();
-    projectiles.create(500,400,'meteorite');
+    for (var i = 0; i < 10; i++) {
+        meteorite = projectiles.create(Math.random() * 800, Math.floor(Math.random() * 1000) - 1100, 'meteorite');
+        meteorite.tint = Math.random() * 0xffffff;
+        var burn = meteorite.animations.add('burn');
+        meteorite.animations.play('burn', Math.random() * 7, true);
+    }
     game.physics.enable(projectiles, Phaser.Physics.ARCADE);
+}
+
+// Move our enemies
+function updateProjectiles() {
+   projectiles.forEach(function(currentProjectile) {
+        if (currentProjectile.y > 632) {
+            currentProjectile.y = Math.floor(Math.random() * 400) - 400;
+            currentProjectile.x = Math.random() * 800;
+            currentProjectile.tint = Math.random() * 0xffffff;
+            dodged++;
+        } else {
+            currentProjectile.y += 8;
+        }
+   }, this);
 }
 
 // Pop the balloon
