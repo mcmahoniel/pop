@@ -70,6 +70,7 @@ function create() {
 
     // Add our background music
     music = game.add.audio('music');
+    music.loop = true;
     music.play();
 
     // Assign our keyboard keys
